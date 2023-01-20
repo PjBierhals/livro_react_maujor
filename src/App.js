@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import React,{ Component } from "react";
+import TabelaHead from "./components/TabelaHead";
+import TabelaFoot from "./components/TabelaFoot";
+import TabelaBody from "./components/TabelaBody";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+class App extends Component {
+  state = {
+    livros:[]
+  };
+  componentDidMount(){
+    fetch("/api/livros.json")
+    .then(response=>response.json())
+    .then(livros => this.setState({livros}))
+    .catch(function(error){
+      console.log("Erro na requisição");
+    })  
+    .finally(function(){
+      console.log("Sempre retor");
+    });
+  };
+  handleRemovaLinha =(id)=>{
+    const livros = this.state.livros.filter(
+      l=>l.id !== id
+    );
+    this.setState({livros});
+  };
+  render(){
+     return (
+			<table className="tabela">
+				<TabelaHead />
+				<TabelaFoot qtdeLivros={this.state.livros.length} />
+				<TabelaBody 
+        livros={this.state.livros} 
+        removerLinha={this.handleRemovaLinha}/>
+			</table>
+		);
+}
 }
 
 export default App;
